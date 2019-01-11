@@ -17,13 +17,98 @@
 <h1 id="logo">출국장 현황</h1>
 </div>
 <div data-role="content" class="content">
-	<br>
 	<h4></h4>
-	<br>
-	<div class="depart-su"></div>
+	<ul class="depart-su" date-role="listview">
+
+	</ul>
 	
 </div>
 </div>
-	<script></script>
+	<script>
+		$(function() {
+		var key="H3wm3BaZQ%2FV%2BpReGcrEZTFt3%2F9LrAXCNEWib7p55lzlEi%2BSrH5fJY6%2BhS6uuBw5UV%2BW%2FnLLqwaNlI9nhT6SbPA%3D%3D";
+        var url = 'http://openapi.airport.kr/openapi/service/StatusOfDepartures/getDeparturesCongestion'; /*URL*/
+        url += '?' + encodeURIComponent('ServiceKey') + '='+key; /*Service Key*/
+        url += '&' + encodeURIComponent('terno') + '=' + encodeURIComponent('1'); 
+		
+        function info(data) {
+        var res = $(data).find("item");
+        var gate1=$(res).find("gateinfo1").text();
+        var gate2=$(res).find("gateinfo2").text();
+        var gate3=$(res).find("gateinfo3").text();
+        var gate4=$(res).find("gateinfo4").text();
+        console.log(gate1);
+		console.log(gate2);
+		console.log(gate3);
+		console.log(gate4);
+
+		function backImg(n) {
+			var back; var backImg = "";
+			if(n < 100) {return "";}
+			back = parseInt( n / 100);
+			for (var i = 0; i < back; i++) {
+				backImg += "<img src='./img/people-bak.png' width='40' height='40'>";
+			}
+			return backImg;
+		}
+
+		function sipImg(n) {
+			var sip; var sipImg = "";
+			if(n >= 100){ 
+				var back = parseInt(n/100);
+				n -=(back*100);
+			}
+
+
+			if(n < 10) {return "";}
+			sip = parseInt( n / 10);
+			for (var i = 0; i < sip; i++) {
+				sipImg += "<img src='./img/people-sip.png' width='30' height='30'>";
+			}
+			return sipImg;
+		}
+
+
+        var list=
+        "<li>" + backImg(gate1) + sipImg(gate1) + gate1+" 명 "+"</li>" +
+        "<li>" + backImg(gate2) + sipImg(gate2) + gate2+" 명 "+"</li>" +
+        "<li>" + backImg(gate3) + sipImg(gate3) + gate3+" 명 "+"</li>" +
+        "<li>" + backImg(gate4) + sipImg(gate4) + gate4+" 명 "+"</li>";
+        $(".content ul").html(list);
+		
+
+        }
+
+
+		function time(data){
+		console.log(data);
+		var res = $(data).find("item");
+		var cgtdt=$(res).find("cgtdt").text();
+		var cgthm=$(res).find("cgthm").text();
+		var year=cgtdt.substring(0,4);
+		var month = cgtdt.substring(4,6);
+		var day= cgtdt.substring(6,8);
+		var hour=cgthm.substring(0,2);
+		var min=cgthm.substring(2,4);
+		var time = year+"년 "+month+"월 "+day+ "일 "+hour+"시 "+min+"분 " + "기준 ";
+		console.log(time);
+		$('.content h4').text(time);
+		info(data);
+		}
+
+
+
+		function request() {
+			$.ajax({
+				url : url,
+				success : function(data){
+					time(data);
+				}
+			})
+		}
+		request();
+		})
+
+	</script>
 </body>
 </html>
